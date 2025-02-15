@@ -40,6 +40,17 @@ export function FrameView({ frame }: FrameViewProps) {
     }
   }, [viewMode, frames.length, activeFrame, setViewMode]);
 
+  const handleFrameChange = React.useCallback((newFrame: Frame | null) => {
+    onFrameChange(newFrame);
+    // If we're in index view and selecting a frame with a window, switch back to paged
+    if (viewMode === 'index' && newFrame) {
+      const [, frameWindow] = getFrameTypeAndWindow(newFrame);
+      if (frameWindow !== null) {
+        setViewMode('paged');
+      }
+    }
+  }, [onFrameChange, viewMode, setViewMode]);
+
   const handlePrevFrame = React.useCallback(() => {
     if (currentIndex > 0) {
       onFrameChange(frames[currentIndex - 1]);
@@ -99,13 +110,13 @@ export function FrameView({ frame }: FrameViewProps) {
         <PagedView
           frames={frames}
           frame={activeFrame}
-          onFrameChange={onFrameChange}
+          onFrameChange={handleFrameChange}
         />
       ) : (
         <IndexedView
           frames={frames}
           frame={activeFrame}
-          onFrameChange={onFrameChange}
+          onFrameChange={handleFrameChange}
         />
       )}
     </View>
