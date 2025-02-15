@@ -3,5 +3,5 @@ import { getTimeframeIntegers } from '~/utils/date/frame';
 
 export default function MonthIndex() {
   const { month } = getTimeframeIntegers(new Date());
-  return <Redirect href={`/month/month/${month}`} />;
+  return <Redirect href={`/(tabs)/(month)/month/${month}`} />;
 }

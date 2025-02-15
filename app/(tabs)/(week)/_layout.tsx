@@ -7,8 +7,9 @@ export default function WeekGroupLayout() {
     <FrameNavigationProvider>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="weeks" />
+          <Stack.Screen name="index" />
           <Stack.Screen name="week" />
+          <Stack.Screen name="weeks" />
         </Stack>
       </View>
     </FrameNavigationProvider>

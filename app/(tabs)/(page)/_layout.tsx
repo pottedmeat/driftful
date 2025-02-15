@@ -7,8 +7,9 @@ export default function PageGroupLayout() {
     <FrameNavigationProvider>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="pages" />
+          <Stack.Screen name="index" />
           <Stack.Screen name="page" />
+          <Stack.Screen name="pages" />
         </Stack>
       </View>
     </FrameNavigationProvider>

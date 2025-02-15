@@ -6,50 +6,17 @@ import { PagedView } from '../paged-view';
 import { IndexedView } from '../indexed-view';
 import { useFrameNavigation } from '~/contexts/frame-navigation';
 import { Frame } from '~/types';
-import { getFrameTypeAndWindow } from '~/utils/frame';
 
 interface FrameViewProps {
   frame: Frame;
 }
 
 export function FrameView({ frame }: FrameViewProps) {
-  const { title, frames, frame: activeFrame, onFrameChange, viewMode, setViewMode } = useFrameNavigation();
+  const { title, frames, frame: activeFrame, onFrameChange, viewMode, setViewMode } = useFrameNavigation(frame);
   const navigation = useNavigation();
   const currentIndex = activeFrame ? frames.findIndex(f => 
     JSON.stringify(f) === JSON.stringify(activeFrame)
   ) : -1;
-
-  React.useEffect(() => {
-    onFrameChange(frame);
-  }, [frame, onFrameChange]);
-
-  const handleViewModeToggle = React.useCallback(() => {
-    if (viewMode === 'paged') {
-      // Only allow switching to index if we have more than 1 frame
-      if (frames.length > 1) {
-        setViewMode('index');
-      }
-    } else {
-      // Only allow switching to paged if active frame has a window
-      if (activeFrame) {
-        const [, window] = getFrameTypeAndWindow(activeFrame);
-        if (window !== null) {
-          setViewMode('paged');
-        }
-      }
-    }
-  }, [viewMode, frames.length, activeFrame, setViewMode]);
-
-  const handleFrameChange = React.useCallback((newFrame: Frame | null) => {
-    onFrameChange(newFrame);
-    // If we're in index view and selecting a frame with a window, switch back to paged
-    if (viewMode === 'index' && newFrame) {
-      const [, frameWindow] = getFrameTypeAndWindow(newFrame);
-      if (frameWindow !== null) {
-        setViewMode('paged');
-      }
-    }
-  }, [onFrameChange, viewMode, setViewMode]);
 
   const handlePrevFrame = React.useCallback(() => {
     if (currentIndex > 0) {
@@ -67,7 +34,7 @@ export function FrameView({ frame }: FrameViewProps) {
     navigation.setOptions({
       headerTitle: () => (
         <TouchableOpacity
-          onPress={handleViewModeToggle}
+          onPress={() => setViewMode(viewMode === 'paged' ? 'index' : 'paged')}
           className="px-4 py-2">
           <Text className="text-lg font-semibold text-gray-800">
             {activeFrame?.title || title}
@@ -102,7 +69,7 @@ export function FrameView({ frame }: FrameViewProps) {
           </TouchableOpacity>
         ) : null,
     });
-  }, [navigation, activeFrame, title, currentIndex, frames, handlePrevFrame, handleNextFrame, viewMode, handleViewModeToggle]);
+  }, [navigation, activeFrame, title, currentIndex, frames, handlePrevFrame, handleNextFrame, viewMode, setViewMode]);
 
   return (
     <View className="flex-1 bg-gray-100">
@@ -110,13 +77,13 @@ export function FrameView({ frame }: FrameViewProps) {
         <PagedView
           frames={frames}
           frame={activeFrame}
-          onFrameChange={handleFrameChange}
+          onFrameChange={onFrameChange}
         />
       ) : (
         <IndexedView
           frames={frames}
           frame={activeFrame}
-          onFrameChange={handleFrameChange}
+          onFrameChange={onFrameChange}
         />
       )}
     </View>

@@ -7,8 +7,9 @@ export default function MonthGroupLayout() {
     <FrameNavigationProvider>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="months" />
+          <Stack.Screen name="index" />
           <Stack.Screen name="month" />
+          <Stack.Screen name="months" />
         </Stack>
       </View>
     </FrameNavigationProvider>

@@ -7,6 +7,7 @@ export default function CollectionsGroupLayout() {
     <FrameNavigationProvider>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
           <Stack.Screen name="collections" />
           <Stack.Screen name="collection" />
         </Stack>

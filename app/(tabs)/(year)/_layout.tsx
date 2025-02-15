@@ -7,8 +7,9 @@ export default function YearGroupLayout() {
     <FrameNavigationProvider>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="years" />
+          <Stack.Screen name="index" />
           <Stack.Screen name="year" />
+          <Stack.Screen name="years" />
         </Stack>
       </View>
     </FrameNavigationProvider>
