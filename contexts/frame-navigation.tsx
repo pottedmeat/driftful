@@ -59,7 +59,7 @@ export function FrameNavigationProvider({ children }: FrameNavigationProviderPro
         frames = FIXTURES;
         frame = { page: null, title: pluralTitle, entities: [] };
       } else {
-        frame = FIXTURES.find(p => 'page' in p && p.page === (frameWindow === 'today' ? 2 : frameWindow === 'future' ? 3 : frameWindow)) || { page: frameWindow as number | 'future', title: pluralTitle, entities: [] } as LoadedFrame;
+        frame = FIXTURES.find(p => 'page' in p && p.page === (frameWindow === 'today' ? 2 : frameWindow === 'future' ? 'future' : frameWindow)) || { page: frameWindow as number | 'future', title: pluralTitle, entities: [] } as LoadedFrame;
         frames = FIXTURES;
       }
     } else {

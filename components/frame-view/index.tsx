@@ -14,9 +14,7 @@ interface FrameViewProps {
 export function FrameView({ frame }: FrameViewProps) {
   const { title, frames, frame: activeFrame, onFrameChange, viewMode, setViewMode } = useFrameNavigation(frame);
   const navigation = useNavigation();
-  const currentIndex = activeFrame ? frames.findIndex(f => 
-    JSON.stringify(f) === JSON.stringify(activeFrame)
-  ) : -1;
+  const currentIndex = frames.indexOf(activeFrame);
 
   const handlePrevFrame = React.useCallback(() => {
     if (currentIndex > 0) {

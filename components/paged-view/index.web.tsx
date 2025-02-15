@@ -1,10 +1,11 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { PagedViewProps } from '.';
 import { FrameContent } from '../frame-content';
 
+// Note: react-multi-carousel uses 0-based indexing for slides
 const responsive = {
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
