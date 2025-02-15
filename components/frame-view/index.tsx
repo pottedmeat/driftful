@@ -64,7 +64,7 @@ export function FrameView({ frame }: FrameViewProps) {
         </TouchableOpacity>
       ),
       headerTitleAlign: 'center',
-      headerLeft: ({ tintColor }) => 
+      headerLeft: ({ tintColor }: { tintColor: string }) => 
         viewMode === 'paged' ? (
           <TouchableOpacity
             disabled={currentIndex <= 0}
@@ -77,7 +77,7 @@ export function FrameView({ frame }: FrameViewProps) {
             />
           </TouchableOpacity>
         ) : null,
-      headerRight: ({ tintColor }) => 
+      headerRight: ({ tintColor }: { tintColor: string }) => 
         viewMode === 'paged' ? (
           <TouchableOpacity
             disabled={currentIndex >= frames.length - 1}

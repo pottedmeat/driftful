@@ -1,9 +1,8 @@
-import React from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { Frame, Entity } from '~/types';
+import type { Entity, LoadedFrame } from '~/types';
 
 interface FrameContentProps {
-  frame: Frame;
+  frame: LoadedFrame;
 }
 
 export function FrameContent({ frame }: FrameContentProps) {

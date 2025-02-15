@@ -1,4 +1,4 @@
-import type { Store } from 'tinybase/persisters';
+import type { Store } from 'tinybase';
 import { createIndexedDbPersister } from 'tinybase/persisters/persister-indexed-db';
 
 export async function createPersister(store: Store, name: string) {

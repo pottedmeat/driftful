@@ -8,8 +8,10 @@ export default function PageScreen() {
   const { pageNumber } = useLocalSearchParams<{ pageNumber: string }>();
   
   // Convert special strings to day numbers
-  let page: number | 'today' | 'future' = pageNumber;
-  if (/^\d+$/.test(page)) {
+  let page: number | 'today' | 'future' = 'today';
+  if (pageNumber === 'today' || pageNumber === 'future') {
+    page = pageNumber;
+  } else if (/^\d+$/.test(pageNumber)) {
     page = parseInt(pageNumber, 10);
   }
 

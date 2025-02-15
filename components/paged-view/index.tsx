@@ -1,9 +1,9 @@
-import { Frame } from '~/types';
+import type { FrameChangeCallback, LoadedFrame } from '~/types';
 
 export interface PagedViewProps {
-  frames: Frame[];
-  frame: Frame | null;
-  onFrameChange: (frame: Frame | null) => void;
+  frames: LoadedFrame[];
+  frame: LoadedFrame;
+  onFrameChange: FrameChangeCallback;
 }
 
 export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {

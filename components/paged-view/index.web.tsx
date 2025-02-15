@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { Frame } from '~/types';
 import { PagedViewProps } from '.';
 import { FrameContent } from '../frame-content';
 
@@ -22,10 +21,8 @@ const responsive = {
 };
 
 export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
-  const currentIndex = frame ? frames.findIndex(f => 
-    f.frameType === frame.frameType && 
-    JSON.stringify(f) === JSON.stringify(frame)
-  ) : 0;
+  const carouselRef = useRef<Carousel>(null);
+  const currentIndex = frames.indexOf(frame);
 
   const handleChange = useCallback((index: number) => {
     console.log({currentIndex, index, frame, frames});
@@ -35,14 +32,21 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
     }
   }, [frames, onFrameChange]);
 
+  // Effect to update carousel position when frame changes externally
+  useEffect(() => {
+    if (carouselRef.current && currentIndex >= 0) {
+      carouselRef.current.goToSlide(currentIndex);
+    }
+  }, [currentIndex]);
+
   return (
     <View className="flex-1">
       <Carousel
+        ref={carouselRef}
         responsive={responsive}
         infinite={false}
         sliderClass="carousel-slider"
         itemClass="carousel-item"
-        selectedSlideIndex={currentIndex}
         afterChange={(_, { currentSlide }) => handleChange(currentSlide)}
         arrows
         swipeable

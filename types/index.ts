@@ -2,14 +2,16 @@
 export type Frame = 
   | { page: 'today' }
   | { page: number | 'future', startDay?: number, endDay?: number }
-  | { page: null },
+  | { page: null }
   | { week: number | null }
   | { month: number | null }
   | { year: number | null }
   | { collection: string | null };
 
+export type FrameChangeCallback = (frame: Frame) => void;
+
 // Frame with loaded content and metadata
-export interface LoadedFrame extends Frame {
+export type LoadedFrame = Exclude<Frame, { page: 'today' }> & {
   title?: string;
   entities?: Entity[];
 }

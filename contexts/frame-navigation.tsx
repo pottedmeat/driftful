@@ -11,7 +11,6 @@ interface FrameNavigationContextType {
   onFrameChange: (frame: Frame | null) => void;
   viewMode: 'paged' | 'index';
   setViewMode: (mode: 'paged' | 'index') => void;
-  lastActiveWindow: number | string | 'future' | null;
 }
 
 const FrameNavigationContext = createContext<FrameNavigationContextType | null>(null);
@@ -27,13 +26,15 @@ const FIXTURES = [
   { page: 'future', entities: [
     { entityId: 'third', type: 'task', content: 'Done Stuff', day: 20000 }
   ] }
-].map((fixture) => {
-  fixture.title = formatTitle(
-    fixture.startDay ? getDatesFromTimeframeIntegers({ day: fixture.startDay }).day[0] : null,
-    fixture.endDay ? getDatesFromTimeframeIntegers({ day: fixture.endDay }).day[0] : null
-  );
-  return fixture;
-});
+].map(fixture => {
+  return {
+    ...fixture,
+    title: formatTitle(
+      fixture.startDay ? getDatesFromTimeframeIntegers({ day: fixture.startDay }).day[0] : null,
+      fixture.endDay ? getDatesFromTimeframeIntegers({ day: fixture.endDay }).day[0] : null
+    )
+  };
+}) as LoadedFrame[];
 
 export interface FrameNavigationProviderProps {
   children: React.ReactNode;
@@ -41,7 +42,6 @@ export interface FrameNavigationProviderProps {
 
 export function FrameNavigationProvider({ children }: FrameNavigationProviderProps) {
   const [activeFrame, setActiveFrame] = useState<Frame | null>(null);
-  const [lastActiveWindow, setLastActiveWindow] = useState<number | string | 'future' | null>(null);
   const [viewMode, setViewMode] = useState<'paged' | 'index'>('paged');
 
   // Get frame type and window from active frame
@@ -59,42 +59,25 @@ export function FrameNavigationProvider({ children }: FrameNavigationProviderPro
         frames = FIXTURES;
         frame = { page: null, title: pluralTitle, entities: [] };
       } else {
-        frame = FIXTURES.find(p => p.page === (frameWindow === 'today' ? 2 : frameWindow === 'future' ? 3 : frameWindow)) || { page: frameWindow, title: pluralTitle, entities: [] };
+        frame = FIXTURES.find(p => 'page' in p && p.page === (frameWindow === 'today' ? 2 : frameWindow === 'future' ? 3 : frameWindow)) || { page: frameWindow as number | 'future', title: pluralTitle, entities: [] } as LoadedFrame;
         frames = FIXTURES;
       }
     } else {
-      frame = { ...activeFrame, title: pluralTitle, entities: [] };
+      frame = { ...activeFrame, title: pluralTitle, entities: [] } as LoadedFrame;
       frames = [frame];
     }
 
     return [pluralTitle, frame, frames];
   }, [frameType, frameWindow, activeFrame]);
 
-  const handleFrameChange = useCallback((newFrame: Frame | null) => {
-    if (newFrame) {
-      const [, window] = getFrameTypeAndWindow(newFrame);
-      if (window === null) {
-        // Store the last active window when switching to index view
-        setLastActiveWindow(frameWindow);
-        setViewMode('index');
-      } else {
-        // Update the last active window when switching to a specific frame
-        setLastActiveWindow(window);
-        setViewMode('paged');
-      }
-    }
-    setActiveFrame(newFrame);
-  }, [frameWindow]);
-
   const value = useMemo(() => ({
     title,
     frames,
     frame,
-    onFrameChange: handleFrameChange,
+    onFrameChange: setActiveFrame,
     viewMode,
     setViewMode,
-    lastActiveWindow,
-  }), [title, frames, frame, handleFrameChange, viewMode, lastActiveWindow]);
+  }), [title, frames, frame, setActiveFrame, viewMode, viewMode]);
 
   return (
     <FrameNavigationContext.Provider value={value}>

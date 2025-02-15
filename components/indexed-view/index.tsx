@@ -1,17 +1,16 @@
-import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { Frame } from '~/types';
+import type { Frame, FrameChangeCallback, LoadedFrame } from '~/types';
 import { getDatesFromTimeframeIntegers } from '~/utils/date/frame';
 import { formatTitle } from '~/utils/date/formatTitle';
 
 interface IndexedViewProps {
-  frames: Frame[];
-  frame: Frame | null;
-  onFrameChange: (frame: Frame | null) => void;
+  frames: LoadedFrame[];
+  frame: LoadedFrame;
+  onFrameChange: FrameChangeCallback;
 }
 
 export function IndexedView({ frames, frame, onFrameChange }: IndexedViewProps) {
-  const renderFrameTitle = (frame: Frame) => {
+  const renderFrameTitle = (frame: LoadedFrame) => {
     if ('page' in frame) {
       if (frame.page === 'future') return 'Future';
       if (frame.page === null) return 'All Pages';

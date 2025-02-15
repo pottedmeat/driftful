@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Frame } from '~/types';
-import { PagedViewProps } from '.';
+import type { PagedViewProps } from '.';
 import { FrameContent } from '../frame-content';
 
 export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
   const pagerRef = useRef<PagerView>(null);
-  const currentIndex = frame ? frames.findIndex(f => 
-    f.frameType === frame.frameType && 
-    JSON.stringify(f) === JSON.stringify(frame)
-  ) : 0;
+  const currentIndex = frames.indexOf(frame);
 
   useEffect(() => {
     if (pagerRef.current && currentIndex >= 0) {
