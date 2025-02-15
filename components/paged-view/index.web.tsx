@@ -46,10 +46,11 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
         ref={carouselRef}
         responsive={responsive}
         infinite={false}
+        arrows={false}
+        showDots={true}
         sliderClass="carousel-slider"
         itemClass="carousel-item"
         afterChange={(_, { currentSlide }) => handleChange(currentSlide)}
-        arrows
         swipeable
         draggable={false}>
         {frames.map((frame, index) => (
