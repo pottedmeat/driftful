@@ -1,47 +1,45 @@
 /**
  * Utility type that joins an array of strings with a delimiter
  */
-export type Join<Items extends string[], Delimiter extends string = ''> =
-  Items extends [] 
-    ? '' 
+export type Join<Items extends string[], Delimiter extends string = ""> =
+  Items extends [] ? ""
     : Items extends [infer First, ...infer Rest]
-      ? `${First & string}${Rest extends [] 
-        ? '' 
+      ? `${First & string}${Rest extends [] ? ""
         : `${Delimiter}${Join<Rest extends string[] ? Rest : [], Delimiter>}`}`
-      : string;
+    : string;
 
 // Frame type that enforces mutual exclusivity of frame properties
-export type Frame = 
-  | { page: 'today' }
-  | { page: number | 'future', startDay?: number, endDay?: number }
+export type Frame =
+  | { page: "today" }
+  | { page: number | "future"; startDay?: number; endDay?: number }
   | { page: null }
   | { week: number | null }
   | { month: number | null }
   | { year: number | null }
   | { collection: string | null };
-export type FrameType = Exclude<KeysOfUnion<Frame>, 'startDay' | 'endDay'>;
+export type FrameType = Exclude<KeysOfUnion<Frame>, "startDay" | "endDay">;
 export type FrameVariants = {
   [K in FrameType]: {
     plural: `${K}s`;
     dynamic: `[${K}]`;
     tuple: [K, ValueInUnion<Frame, K>];
-  }
+  };
 };
-export type FrameTypePlural = FrameVariants[FrameType]['plural'];
-export type FrameTypeDynamic = FrameVariants[FrameType]['dynamic'];
-export type FrameTypeTuple = FrameVariants[FrameType]['tuple'];
+export type FrameTypePlural = FrameVariants[FrameType]["plural"];
+export type FrameTypeDynamic = FrameVariants[FrameType]["dynamic"];
+export type FrameTypeTuple = FrameVariants[FrameType]["tuple"];
 
 export type FrameChangeCallback = (frame: Frame) => void;
 
 // Frame with loaded content and metadata
-export type LoadedFrame = Exclude<Frame, { page: 'today' }> & {
+export type LoadedFrame = Exclude<NonNullFrame, { page: "today" }> & {
   title?: string;
   entities?: Entity[];
-}
+};
 
 export interface Entity {
   entityId: string;
-  type: 'task' | 'note' | 'event' | 'collection';
+  type: "task" | "note" | "event" | "collection";
   content: string;
   day?: number;
   week?: number;
@@ -60,5 +58,17 @@ export interface Entity {
 
 type KeysOfUnion<T> = T extends any ? keyof T : never;
 
-type ValueInUnion<T, K extends PropertyKey> =
-  T extends any ? (K extends keyof T ? T[K] : never) : never;
+type ValueInUnion<T, K extends PropertyKey> = T extends any
+  ? (K extends keyof T ? T[K] : never)
+  : never;
+
+type HasNever<T, K extends PropertyKey> = {
+  [P in Extract<keyof T, K>]: NonNullable<T[P]> extends never ? true : false;
+}[Extract<keyof T, K>];
+
+type RemoveNullFromKeys<T, K extends PropertyKey> = T extends any
+  ? HasNever<T, K> extends true ? never
+  : { [P in keyof T]: P extends K ? NonNullable<T[P]> : T[P] }
+  : never;
+
+type NonNullFrame = RemoveNullFromKeys<Frame, FrameType>;

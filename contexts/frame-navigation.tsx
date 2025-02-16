@@ -75,7 +75,7 @@ export function FrameNavigationProvider({ children, initialFrame }: FrameNavigat
     if (frameType === 'page') {
       if (frameWindow === null) {
         frames = FIXTURES;
-        frame = { page: null, title: pluralTitle, entities: [] };
+        frame = { page: 2, title: pluralTitle, entities: [] };
       } else {
         frame = FIXTURES.find(p => 'page' in p && p.page === (frameWindow === 'today' ? 2 : frameWindow === 'future' ? 'future' : frameWindow)) || { page: frameWindow as number | 'future', title: pluralTitle, entities: [] } as LoadedFrame;
         frames = FIXTURES;

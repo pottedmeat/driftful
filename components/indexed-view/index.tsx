@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import type { Frame, FrameChangeCallback, LoadedFrame } from '~/types';
 import { getDatesFromTimeframeIntegers } from '~/utils/date/frame';
 import { formatTitle } from '~/utils/date/formatTitle';
@@ -13,11 +13,10 @@ export function IndexedView({ frames, frame, onFrameChange }: IndexedViewProps) 
   const renderFrameTitle = (frame: LoadedFrame) => {
     if ('page' in frame) {
       if (frame.page === 'future') return 'Future';
-      if (frame.page === null) return 'All Pages';
       const dates = getDatesFromTimeframeIntegers({ day: frame.page });
       return formatTitle(dates.day[0], dates.day[1]);
     }
-    if ('week' in frame && frame.week !== null) {
+    if ('week' in frame) {
       const dates = getDatesFromTimeframeIntegers({ week: frame.week });
       return formatTitle(dates.week[0], dates.week[1]);
     }
@@ -35,22 +34,37 @@ export function IndexedView({ frames, frame, onFrameChange }: IndexedViewProps) 
     return 'Unknown Frame';
   };
 
+  const renderItem = ({ item }: { item: LoadedFrame }) => (
+    <TouchableOpacity
+      className={`bg-white p-4 border-b border-gray-100 ${
+        frame && JSON.stringify(item) === JSON.stringify(frame)
+          ? 'bg-sky-50 border-sky-500'
+          : ''
+      }`}
+      onPress={() => onFrameChange(item)}>
+      <Text className="text-base font-medium text-gray-800">{renderFrameTitle(item)}</Text>
+    </TouchableOpacity>
+  );
+
+  const ItemSeparator = () => <View className="h-px bg-gray-100" />;
+
+  const ListEmptyComponent = () => (
+    <View className="flex-1 items-center justify-center p-8">
+      <Text className="text-gray-500 text-base text-center">
+        No frames available
+      </Text>
+    </View>
+  );
+
   return (
-    <ScrollView className="flex-1">
-      <View className="p-4 flex-row flex-wrap gap-4">
-        {frames.map((f, index) => (
-          <TouchableOpacity
-            key={index}
-            className={`bg-white rounded-lg p-4 w-full max-w-[300px] shadow-sm ${
-              frame && JSON.stringify(f) === JSON.stringify(frame)
-                ? 'bg-sky-50 border border-sky-500'
-                : ''
-            }`}
-            onPress={() => onFrameChange(f)}>
-            <Text className="text-base font-medium text-gray-800">{renderFrameTitle(f)}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
+    <FlatList
+      data={frames}
+      renderItem={renderItem}
+      ItemSeparatorComponent={ItemSeparator}
+      ListEmptyComponent={ListEmptyComponent}
+      contentContainerClassName="flex-grow"
+      keyExtractor={(_, index) => index.toString()}
+      showsVerticalScrollIndicator={false}
+    />
   );
 }

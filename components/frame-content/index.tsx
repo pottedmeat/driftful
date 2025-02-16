@@ -7,12 +7,12 @@ interface FrameContentProps {
 
 export function FrameContent({ frame }: FrameContentProps) {
   const renderItem = ({ item }: { item: Entity }) => (
-    <View className="bg-white rounded-lg p-4 shadow-sm">
-      <Text className="text-gray-800">{item.content}</Text>
+    <View className="bg-white p-4 border-b border-gray-100">
+      <Text className="text-base font-medium text-gray-800">{item.content}</Text>
     </View>
   );
 
-  const ItemSeparator = () => <View className="h-2" />;
+  const ItemSeparator = () => <View className="h-px bg-gray-100" />;
 
   const ListEmptyComponent = () => (
     <View className="flex-1 items-center justify-center p-8">
@@ -28,11 +28,9 @@ export function FrameContent({ frame }: FrameContentProps) {
       renderItem={renderItem}
       ItemSeparatorComponent={ItemSeparator}
       ListEmptyComponent={ListEmptyComponent}
-      contentContainerClassName="p-4 grow"
+      contentContainerClassName="flex-grow"
       keyExtractor={item => item.entityId}
       showsVerticalScrollIndicator={false}
-      overScrollMode="never"
-      bounces={true}
     />
   );
 }
