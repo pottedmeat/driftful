@@ -53,7 +53,7 @@ const canUseIndexMode = (frame: Frame | null, frames: LoadedFrame[]) => {
 
 const getInitialViewMode = (frame: Frame, frames: LoadedFrame[]): 'paged' | 'index' => {
   const [, frameWindow] = getFrameTypeAndWindow(frame);
-  console.log(frame, frames.length, frameWindow);
+  console.log('getInitialViewMode', frame, frames.length, frameWindow);
   if (!frameWindow && canUseIndexMode(frame, frames)) {
     return 'index';
   }

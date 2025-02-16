@@ -26,7 +26,6 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
   const currentIndex = frames.indexOf(frame);
 
   const handleChange = useCallback((index: number) => {
-    console.log({currentIndex, index, frame, frames});
     const newFrame = frames[index];
     if (newFrame) {
       onFrameChange(newFrame);

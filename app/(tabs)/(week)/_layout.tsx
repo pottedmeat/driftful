@@ -8,10 +8,11 @@ export default function WeekGroupLayout() {
   if (!frame) {
     return null;
   }
+  console.log('WeekGroupLayout', frame);
   return (
     <FrameNavigationProvider initialFrame={frame}>
       <View className="flex-1">
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="week" />
           <Stack.Screen name="weeks" />
