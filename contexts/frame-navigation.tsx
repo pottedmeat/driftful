@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import type { Frame, LoadedFrame, FrameChangeCallback } from '~/types';
+import type { Frame, LoadedFrame, FrameChangeCallback, FrameTypeTuple } from '~/types';
 import { formatTitle } from '~/utils/date/formatTitle';
 import { getDatesFromTimeframeIntegers } from '~/utils/date/frame';
 import { getFrameTypeAndWindow, getPluralFrameTitle } from '~/utils/frame';
@@ -64,7 +64,7 @@ export function FrameNavigationProvider({ children, initialFrame }: FrameNavigat
   const [activeFrame, setActiveFrame] = useState<Frame | null>(initialFrame || null);
   
   // Get frame type and window from active frame
-  const [frameType, frameWindow] = activeFrame ? getFrameTypeAndWindow(activeFrame) : ['page', null];
+  const [frameType, frameWindow] = activeFrame ? getFrameTypeAndWindow(activeFrame) : (['page', null] as FrameTypeTuple);
 
   // Compute title, frame and frames based on active frame
   const [title, frame, frames] = useMemo(() => {

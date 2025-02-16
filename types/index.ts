@@ -19,6 +19,17 @@ export type Frame =
   | { month: number | null }
   | { year: number | null }
   | { collection: string | null };
+export type FrameType = Exclude<KeysOfUnion<Frame>, 'startDay' | 'endDay'>;
+export type FrameVariants = {
+  [K in FrameType]: {
+    plural: `${K}s`;
+    dynamic: `[${K}]`;
+    tuple: [K, ValueInUnion<Frame, K>];
+  }
+};
+export type FrameTypePlural = FrameVariants[FrameType]['plural'];
+export type FrameTypeDynamic = FrameVariants[FrameType]['dynamic'];
+export type FrameTypeTuple = FrameVariants[FrameType]['tuple'];
 
 export type FrameChangeCallback = (frame: Frame) => void;
 
@@ -44,3 +55,10 @@ export interface Entity {
   created_at: number;
   updated_at: number;
 }
+
+/** Helper Types */
+
+type KeysOfUnion<T> = T extends any ? keyof T : never;
+
+type ValueInUnion<T, K extends PropertyKey> =
+  T extends any ? (K extends keyof T ? T[K] : never) : never;

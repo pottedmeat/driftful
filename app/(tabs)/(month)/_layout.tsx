@@ -5,7 +5,9 @@ import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function MonthGroupLayout() {
   const { frame } = useFrameRoute();
-  
+  if (!frame) {
+    return null;
+  }
   return (
     <FrameNavigationProvider initialFrame={frame}>
       <View className="flex-1">

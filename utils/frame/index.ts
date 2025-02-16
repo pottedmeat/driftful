@@ -1,11 +1,6 @@
-import { Frame } from '~/types';
+import type { Frame, FrameTypeTuple, FrameType } from '~/types';
 
-type FrameTypeAndWindow = [
-  'page' | 'week' | 'month' | 'year' | 'collection',
-  number | 'future' | null | string
-];
-
-export function getFrameTypeAndWindow(frame: Frame): FrameTypeAndWindow {
+export function getFrameTypeAndWindow(frame: Frame): FrameTypeTuple {
   if ('page' in frame) return ['page', frame.page];
   if ('week' in frame) return ['week', frame.week];
   if ('month' in frame) return ['month', frame.month];
@@ -14,7 +9,7 @@ export function getFrameTypeAndWindow(frame: Frame): FrameTypeAndWindow {
   throw new Error('Invalid frame type');
 }
 
-export function getPluralFrameTitle(frameType: string): string {
+export function getPluralFrameTitle(frameType: FrameType): string {
   switch (frameType) {
     case 'page':
       return 'Pages';

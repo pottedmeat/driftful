@@ -1,120 +1,99 @@
 import { useLocalSearchParams, useSegments } from 'expo-router';
 import { getTimeframeIntegers } from '~/utils/date/frame';
-import type { Frame, Join } from '~/types';
+import type { Frame, Join, FrameType, FrameVariants } from '~/types';
 
-type FrameType = 'page' | 'week' | 'month' | 'year' | 'collection';
-
-const defaultSegments = {
-  page: ['page', '[page]'] as const,
-  week: ['week', '[week]'] as const,
-  month: ['month', '[month]'] as const,
-  year: ['year', '[year]'] as const,
-  collection: ['collections'] as const,
+const defaultSegments: {
+  [K in FrameType]: DefaultSegmentValue<K>;
+} = {
+  page: ['page', '[page]'],
+  week: ['week', '[week]'],
+  month: ['month', '[month]'],
+  year: ['year', '[year]'],
+  collection: ['collections'],
 } as const;
 
 export function useFrameRoute() {
   const segments = useSegments();
-  const params = useLocalSearchParams<{
-    pageNumber?: string;
-    weekInteger?: string;
-    monthInteger?: string;
-    year?: string;
-    collectionId?: string;
-  }>();
+  const params = useLocalSearchParams<Record<FrameType, string>>();
 
   // Early return if not in a frame route
   if (
     !segments[0] || !segments[1] || segments[0] !== '(tabs)' ||
     !segments[1].startsWith('(')
   ) {
-    return { frame: { page: null } as Frame, href: null };
+    return { frame: null, href: null };
   }
 
   // Extract frame type from segment
-  const frameType = segments[1].slice(1, -1);
-  let frame: Frame = { [frameType]: null } as Record<FrameType, null>;
+  let frame: Frame;
   let redirectSegments = segments;
 
-  // Handle root redirects
+  // Handle root redirects e.g. /(tabs)/(page)
   if (segments.length === 2) {
+    const { week, month, year } = getTimeframeIntegers(new Date());
     if (segments[1] === '(page)') {
+      params.page = 'today';
+      frame = { page: 'today' };
       redirectSegments = [...segments, ...defaultSegments.page];
     } else if (segments[1] === '(week)') {
+      params.week = week.toString();
+      frame = { week };
       redirectSegments = [...segments, ...defaultSegments.week];
     } else if (segments[1] === '(month)') {
+      params.month = month.toString();
+      frame = { month };
       redirectSegments = [...segments, ...defaultSegments.month];
     } else if (segments[1] === '(year)') {
+      params.year = year.toString();
+      frame = { year };
       redirectSegments = [...segments, ...defaultSegments.year];
     } else if (segments[1] === '(collections)') {
+      frame = { collection: null };
       redirectSegments = [...segments, ...defaultSegments.collection];
-    }
-
-    // Set default values for parameters
-    const { week, month, year } = getTimeframeIntegers(new Date());
-    switch (frameType) {
-      case 'page':
-        params.pageNumber = 'today';
-        frame = { page: 'today' };
-        break;
-      case 'week':
-        params.weekInteger = week.toString();
-        frame = { week };
-        break;
-      case 'month':
-        params.monthInteger = month.toString();
-        frame = { month };
-        break;
-      case 'year':
-        params.year = year.toString();
-        frame = { year };
-        break;
-      case 'collection':
-        frame = { collection: null };
-        break;
+    } else {
+      return { frame: null, href: null };
     }
   } else {
     // Parse frame values
-    switch (frameType) {
-      case 'page':
-        frame = { page: 'today' };
-        if (params.pageNumber === 'today' || params.pageNumber === 'future') {
-          frame = { page: params.pageNumber };
-        } else if (params.pageNumber && /^\d+$/.test(params.pageNumber)) {
-          frame = { page: parseInt(params.pageNumber, 10) };
-        }
-        break;
-
-      case 'week':
-        if (params.weekInteger && /^\d+$/.test(params.weekInteger)) {
-          frame = { week: parseInt(params.weekInteger, 10) };
-        }
-        break;
-
-      case 'month':
-        if (params.monthInteger && /^\d+$/.test(params.monthInteger)) {
-          frame = { month: parseInt(params.monthInteger, 10) };
-        }
-        break;
-
-      case 'year':
-        if (params.year && /^\d+$/.test(params.year)) {
-          frame = { year: parseInt(params.year, 10) };
-        }
-        break;
-
-      case 'collection':
-        if (params.collectionId) {
-          frame = { collection: params.collectionId };
-        }
-        break;
+    if (segments[1] === '(page)') {
+      frame = { page: 'today' };
+      if (params.page === 'today' || params.page === 'future') {
+        frame = { page: params.page };
+      } else if (params.page && /^\d+$/.test(params.page)) {
+        frame = { page: parseInt(params.page, 10) };
+      }
+    } else if (segments[1] === '(week)') {
+      frame = { week: null };
+      if (params.week && /^\d+$/.test(params.week)) {
+        frame = { week: parseInt(params.week, 10) };
+      }
+    } else if (segments[1] === '(month)') {
+      frame = { month: null };
+      if (params.month && /^\d+$/.test(params.month)) {
+        frame = { month: parseInt(params.month, 10) };
+      }
+    } else if (segments[1] === '(year)') {
+      frame = { year: null };
+      if (params.year && /^\d+$/.test(params.year)) {
+        frame = { year: parseInt(params.year, 10) };
+      }
+    } else if (segments[1] === '(collections)') {
+      frame = { collection: null };
+      if (params.collection) {
+        frame = { collection: params.collection };
+      }
+    } else {
+      return { frame: null, href: null };
     }
   }
 
   return {
     frame,
-    href: `/${redirectSegments.join('/')}` as `/${Join<
-        typeof redirectSegments,
-        '/'
-      >}`
+    href: `/${redirectSegments.join('/')}` as `/${Join<typeof redirectSegments, '/'>}`
   };
 }
+
+/** Helper types */
+type DefaultSegmentValue<K extends FrameType> =
+  | [K, FrameVariants[K]['dynamic']]
+  | [FrameVariants[K]['plural']];
