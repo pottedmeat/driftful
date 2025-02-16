@@ -41,10 +41,10 @@ export interface FrameNavigationProviderProps {
   initialFrame: Frame;
 }
 
-const canUsePagedMode = (frame: Frame | null, frames: LoadedFrame[]) => {
+const canUsePagedMode = (frame: Frame | null) => {
   if (!frame) return false;
-  const [frameType, window] = getFrameTypeAndWindow(frame);
-  return window !== null || frameType === 'collection';
+  const [frameType, frameWindow] = getFrameTypeAndWindow(frame);
+  return frameWindow !== null || frameType !== 'collection';
 };
 
 const canUseIndexMode = (frame: Frame | null, frames: LoadedFrame[]) => {
@@ -93,7 +93,7 @@ export function FrameNavigationProvider({ children, initialFrame }: FrameNavigat
   });
 
   const setViewMode = useCallback((newMode: 'paged' | 'index') => {
-    if (newMode === 'paged' && canUsePagedMode(activeFrame, frames)) {
+    if (newMode === 'paged' && canUsePagedMode(activeFrame)) {
       setViewModeInternal('paged');
     } else if (newMode === 'index' && canUseIndexMode(activeFrame, frames)) {
       setViewModeInternal('index');

@@ -4,7 +4,7 @@ import { FrameNavigationProvider } from '~/contexts/frame-navigation';
 import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function MonthGroupLayout() {
-  const { frame } = useFrameRoute();
+  const { frame } = useFrameRoute('month');
   if (!frame) {
     return null;
   }

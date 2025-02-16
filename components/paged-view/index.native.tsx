@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import type { PagedViewProps } from '.';
 import { FrameContent } from '../frame-content';
@@ -25,7 +25,7 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
     <View className="flex-1">
       <PagerView
         ref={pagerRef}
-        className="flex-1"
+        style={styles.pager}
         initialPage={currentIndex}
         onPageSelected={handlePageSelected}>
         {frames.map((frame, index) => (
@@ -37,3 +37,9 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pager: {
+    flex: 1,
+  },
+});

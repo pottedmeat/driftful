@@ -12,14 +12,13 @@ const defaultSegments: {
   collection: ['collections'],
 } as const;
 
-export function useFrameRoute() {
+export function useFrameRoute(caller: ReturnType<typeof useSegments>[2]) {
   const segments = useSegments();
   const params = useLocalSearchParams<Record<FrameType, string>>();
   
   // Early return if not in a frame route
   if (
-    !segments[0] || !segments[1] || segments[0] !== '(tabs)' ||
-    !segments[1].startsWith('(')
+    !segments[0] || !segments[1] || segments[0] !== '(tabs)' || segments[1] !== `(${caller})`
   ) {
     return { frame: null, href: null };
   }
@@ -32,15 +31,19 @@ export function useFrameRoute() {
   if (segments.length === 2) {
     const { week, month, year } = getTimeframeIntegers(new Date());
     if (segments[1] === '(page)') {
+      params.page = 'today';
       frame = { page: 'today' };
       redirectSegments = [...segments, ...defaultSegments.page];
     } else if (segments[1] === '(week)') {
+      params.week = week.toString();
       frame = { week };
       redirectSegments = [...segments, ...defaultSegments.week];
     } else if (segments[1] === '(month)') {
+      params.month = month.toString();
       frame = { month };
       redirectSegments = [...segments, ...defaultSegments.month];
     } else if (segments[1] === '(year)') {
+      params.year = year.toString();
       frame = { year };
       redirectSegments = [...segments, ...defaultSegments.year];
     } else if (segments[1] === '(collections)') {
@@ -85,6 +88,7 @@ export function useFrameRoute() {
 
   return {
     frame,
+    localSearchParams: params,
     href: `/${redirectSegments.join('/')}` as `/${Join<typeof redirectSegments, '/'>}`
   };
 }

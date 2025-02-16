@@ -2,7 +2,7 @@ import { Redirect } from 'expo-router';
 import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function MonthIndex() {
-  const { href } = useFrameRoute();
+  const { href } = useFrameRoute('month');
   if (!href) return null;
   return <Redirect href={href} />;
 }
