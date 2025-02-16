@@ -53,7 +53,6 @@ const canUseIndexMode = (frame: Frame | null, frames: LoadedFrame[]) => {
 
 const getInitialViewMode = (frame: Frame, frames: LoadedFrame[]): 'paged' | 'index' => {
   const [, frameWindow] = getFrameTypeAndWindow(frame);
-  console.log('getInitialViewMode', frame, frames.length, frameWindow);
   if (!frameWindow && canUseIndexMode(frame, frames)) {
     return 'index';
   }
@@ -89,9 +88,9 @@ export function FrameNavigationProvider({ children, initialFrame }: FrameNavigat
     return [pluralTitle, frame, frames];
   }, [frameType, frameWindow, activeFrame]);
 
-  const [viewMode, setViewModeInternal] = useState<'paged' | 'index'>(() => 
-    getInitialViewMode(initialFrame, frames)
-  );
+  const [viewMode, setViewModeInternal] = useState<'paged' | 'index'>(() => {
+    return getInitialViewMode(initialFrame, frames)
+  });
 
   const setViewMode = useCallback((newMode: 'paged' | 'index') => {
     if (newMode === 'paged' && canUsePagedMode(activeFrame, frames)) {
