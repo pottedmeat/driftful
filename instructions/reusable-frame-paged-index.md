@@ -4,15 +4,15 @@ globs:
 ---
 The Reusable Frame, PagedView, and Indexed View System
 
-Driftful uses a reusable, frame-based system for displaying (and switching between) various "windows" of data in a consistent, horizontally-swipable interface. This system lets each top-level tab (Page, Week, Month, Year, Collections) show its own data by simply specifying a single key/value object known as a "Frame."
+Driftful uses a reusable, frame-based system for displaying (and switching between) various "windows" of data in a consistent, horizontally-swipable interface. This system lets each top-level tab (Page, Week, Month, Year, Collections) show its own data through a frame-based navigation system.
 
-This document explains the concepts behind the Frame, PagedView, IndexedView,and FrameView (and how they work together), so you can confidently create or modify screens across these different time or collection-based views.
+This document explains the concepts behind the Frame, PagedView, IndexedView, and FrameView (and how they work together), so you can confidently create or modify screens across these different time or collection-based views.
 
 1. Core Concepts
 
 1.1 What Is a "Frame"?
 
-A Frame is an interface representing one "slice" of data, such as a single page, a single week, a single month, but also the index of all frames by a  specific type. Each Frame generally has:
+A Frame is an interface representing one "slice" of data, such as a single page, a single week, a single month, but also the index of all frames by a specific type. Each Frame generally has:
 	-	key (string): What type of window it wants to display (e.g., page, week, month, year, or collection)
     -	value (number | string | 'future'): Which frame window should be used (e.g. 12 for a page, for special pages, 661 for a month, 2025 for a year, or 'uxi342lk1' for a collection)
 
@@ -47,54 +47,43 @@ IndexedView is a separate component that:
 
 The IndexedView provides an alternative way to browse frames compared to the swipeable PagedView, showing multiple frames at once in a grid layout.
 
-1.4 FrameView
+1.4 FrameView and Frame Navigation
 
-FrameView is a higher-level component that:
-	1.	Manages toggling between PagedView and IndexedView modes.
-	2.	Fetches / Filters the data for each frame (e.g. retrieving month #12 vs. month #1).
-	3.	Builds the array of frames (with appropriate ID/window) for a given frame type (page, week, month, year, collection).
-    4. Accepts these props:
-        •	frameType: The type of frame to display (page, week, month, year, collection).
-        •	frame: Which frame is currently active.
-        •	onFrameChange: A callback for when the user selects a frame.
-	4.	Renders the final UI with a consistent layout:
-	    •	A top-level header (with title, view toggle, and prev/next buttons).
-	    •	Either a swipable PagedView or grid-based IndexedView.
+The frame navigation system consists of two main parts:
 
-When a tab route or screen (e.g. MonthsScreen) wants to display all months in an indexed view, it simply renders:
+1. FrameNavigationProvider:
+   - Manages the active frame state and navigation logic
+   - Initialized with an initial frame in the group layout
+   - Provides frame data and navigation methods to child components
 
-export default function MonthsScreen() {
-  return <FrameView frame={{month: 12}} />;
-}
-
-FrameView then:
-	1.	Looks at frameType="month", calls useFrameContent({month: 12}) to figure out which month frames are relevant.
-	2.	Manages the user's swipes or arrow clicks to set the current frame.
-	3.	Fetches the data for that frame in the background.
-
-Optionally, if you want a specific frame to open (like the year 2025 or a "future" page), you pass an initial window:
-
-<FrameView frame={{year: 2025}} />
-<FrameView frame={{page: 'future'}} />
+2. FrameView:
+   - A presentational component that:
+     - Manages toggling between PagedView and IndexedView modes
+     - Renders the final UI with a consistent layout:
+       • A top-level header (with title, view toggle, and prev/next buttons)
+       • Either a swipable PagedView or grid-based IndexedView
 
 ## How These Pieces Work Together
 
 Below is a simplified overview of how the code flows when a user visits something like the "Month" tab:
-	1.	User taps "Month" tab → Renders MonthScreen.
-    2.  MonthScreen finds the integer value of the current month.
-	3.	MonthScreen returns `<FrameView frame={{month: 661}} />`.
-	4.	FrameView calls `useFrameContent(activeFrame)`, which returns an object with:
-    	-	frames: Builds and returns an array of frames for all months containing entries or breadcrumbs with the additional properties:
-            -   title: The title to display when that frame is active
-            -   entities (optional): For the active frame, two preceding and two following frames
-    	-	frame (nullable): The frame indicating the active frame (null for the index view)
-        -   onFrameChange: A callback for when the user selects a frame.
-    4.	FrameView passes frames, frame, onFrameChange (as a destructured prop) to PagedView.
-	5.	PagedView displays the frames in a horizontally swipable carousel (mobile) or multi-carousel (web). The user can:
-	    •	Swipe left/right and click next/prev arrows in header which calls onFrameChange({month: 660}) or onFrameChange({month: 662})
-	    •	Tap an the title in the header to toggle to the index view which calls onFrameChange(null)
-	6.	As the user navigates from month to month:
-	    •	`onFrameChange` triggers, updating the currentIndex → FrameView loads and displays new data for that month → UI updates automatically.
+
+1. User taps "Month" tab → Renders MonthGroupLayout
+2. MonthGroupLayout:
+   - Determines the current frame based on the route (e.g., /month/661)
+   - Initializes FrameNavigationProvider with the frame
+   - Renders child routes within the provider
+
+3. Child route (e.g., MonthScreen) renders FrameView which:
+   - Connects to FrameNavigationProvider to access:
+     • frames: Array of available frames with titles and data
+     • frame: The currently active frame
+     • onFrameChange: Navigation callback
+   - Renders either PagedView or IndexedView based on the current mode
+
+4. As the user navigates:
+   - Swipes or clicks trigger onFrameChange
+   - FrameNavigationProvider updates the active frame
+   - UI updates automatically through the provider context
 
 ## Indexed View vs. Paged View
 

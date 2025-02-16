@@ -1,7 +1,8 @@
+import { useLocalSearchParams } from 'expo-router';
 import { Stack } from 'expo-router';
 import { FrameView } from '~/components/frame-view';
 
-export default function YearScreen() {
+export default function PageScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />

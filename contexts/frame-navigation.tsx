@@ -38,12 +38,31 @@ const FIXTURES = [
 
 export interface FrameNavigationProviderProps {
   children: React.ReactNode;
+  initialFrame: Frame;
 }
 
-export function FrameNavigationProvider({ children }: FrameNavigationProviderProps) {
-  const [activeFrame, setActiveFrame] = useState<Frame | null>(null);
-  const [viewMode, setViewModeInternal] = useState<'paged' | 'index'>('paged');
+const canUsePagedMode = (frame: Frame | null, frames: LoadedFrame[]) => {
+  if (!frame) return false;
+  const [frameType, window] = getFrameTypeAndWindow(frame);
+  return window !== null || frameType === 'collection';
+};
 
+const canUseIndexMode = (frame: Frame | null, frames: LoadedFrame[]) => {
+  return frames.length > 1 || (frame && 'collection' in frame);
+};
+
+const getInitialViewMode = (frame: Frame, frames: LoadedFrame[]): 'paged' | 'index' => {
+  const [, frameWindow] = getFrameTypeAndWindow(frame);
+  console.log(frame, frames.length, frameWindow);
+  if (!frameWindow && canUseIndexMode(frame, frames)) {
+    return 'index';
+  }
+  return 'paged';
+};
+
+export function FrameNavigationProvider({ children, initialFrame }: FrameNavigationProviderProps) {
+  const [activeFrame, setActiveFrame] = useState<Frame | null>(initialFrame || null);
+  
   // Get frame type and window from active frame
   const [frameType, frameWindow] = activeFrame ? getFrameTypeAndWindow(activeFrame) : ['page', null];
 
@@ -70,22 +89,17 @@ export function FrameNavigationProvider({ children }: FrameNavigationProviderPro
     return [pluralTitle, frame, frames];
   }, [frameType, frameWindow, activeFrame]);
 
+  const [viewMode, setViewModeInternal] = useState<'paged' | 'index'>(() => 
+    getInitialViewMode(initialFrame, frames)
+  );
+
   const setViewMode = useCallback((newMode: 'paged' | 'index') => {
-    if (newMode === 'paged') {
-      // Only allow switching to paged if active frame has a window
-      if (activeFrame) {
-        const [frameType, window] = getFrameTypeAndWindow(activeFrame);
-        if (window !== null || frameType === 'collection') {
-          setViewModeInternal('paged');
-        }
-      }
-    } else {
-      // Allow switching to index if we have more than 1 frame or if it's a collection
-      if (frames.length > 1 || (activeFrame && 'collection' in activeFrame)) {
-        setViewModeInternal('index');
-      }
+    if (newMode === 'paged' && canUsePagedMode(activeFrame, frames)) {
+      setViewModeInternal('paged');
+    } else if (newMode === 'index' && canUseIndexMode(activeFrame, frames)) {
+      setViewModeInternal('index');
     }
-  }, [activeFrame]);
+  }, [activeFrame, frames]);
 
   const handleFrameChange = useCallback((newFrame: Frame) => {
     setActiveFrame(newFrame);
@@ -110,14 +124,10 @@ export function FrameNavigationProvider({ children }: FrameNavigationProviderPro
   );
 }
 
-export function useFrameNavigation(initialFrame: Frame) {
+export function useFrameNavigation() {
   const context = useContext(FrameNavigationContext);
   if (!context) {
     throw new Error('useFrameNavigation must be used within a FrameNavigationProvider');
   }
-  React.useEffect(() => {
-    console.log('Initial frame', initialFrame);
-    context.onFrameChange(initialFrame);
-  }, [initialFrame]);
   return context;
 }

@@ -1,5 +1,8 @@
 import { Redirect } from 'expo-router';
+import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function PageIndex() {
-  return <Redirect href="/(tabs)/(page)/page/today" />;
+  const { href } = useFrameRoute();
+  if (!href) return null;
+  return <Redirect href={href} />;
 }

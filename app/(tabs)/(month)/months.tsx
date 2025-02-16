@@ -5,7 +5,7 @@ export default function MonthsScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />
-      <FrameView frame={{ month: null }} />
+      <FrameView />
     </>
   );
 }

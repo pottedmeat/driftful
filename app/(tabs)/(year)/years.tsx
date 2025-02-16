@@ -5,7 +5,7 @@ export default function YearsScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />
-      <FrameView frame={{ year: null }} />
+      <FrameView />
     </>
   );
 }

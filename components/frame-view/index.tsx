@@ -5,15 +5,11 @@ import { useNavigation } from 'expo-router';
 import { PagedView } from '../paged-view';
 import { IndexedView } from '../indexed-view';
 import { useFrameNavigation } from '~/contexts/frame-navigation';
-import { Frame } from '~/types';
 
-interface FrameViewProps {
-  frame: Frame;
-}
-
-export function FrameView({ frame }: FrameViewProps) {
-  const { title, frames, frame: activeFrame, onFrameChange, viewMode, setViewMode } = useFrameNavigation(frame);
+export function FrameView() {
+  const { title, frames, frame: activeFrame, onFrameChange, viewMode, setViewMode } = useFrameNavigation();
   const navigation = useNavigation();
+  
   const currentIndex = frames.indexOf(activeFrame);
 
   const handlePrevFrame = React.useCallback(() => {

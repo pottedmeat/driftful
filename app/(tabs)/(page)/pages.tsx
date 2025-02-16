@@ -6,7 +6,7 @@ export default function WeeksScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />
-      <FrameView frame={{ page: null }} />
+      <FrameView />
     </>
   );
 }

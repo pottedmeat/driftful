@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { FrameView } from '~/components/frame-view';
 
-export default function YearScreen() {
+export default function WeekScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />

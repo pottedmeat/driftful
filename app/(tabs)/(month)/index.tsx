@@ -1,7 +1,8 @@
 import { Redirect } from 'expo-router';
-import { getTimeframeIntegers } from '~/utils/date/frame';
+import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function MonthIndex() {
-  const { month } = getTimeframeIntegers(new Date());
-  return <Redirect href={`/(tabs)/(month)/month/${month}`} />;
+  const { href } = useFrameRoute();
+  if (!href) return null;
+  return <Redirect href={href} />;
 }

@@ -1,5 +1,8 @@
 import { Redirect } from 'expo-router';
+import { useFrameRoute } from '~/hooks/use-frame-route';
 
 export default function CollectionsIndex() {
-  return <Redirect href="/(tabs)/(collections)/collections" />;
+  const { href } = useFrameRoute();
+  if (!href) return null;
+  return <Redirect href={href} />;
 }

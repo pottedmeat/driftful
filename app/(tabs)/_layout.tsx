@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { FileTextIcon } from '~/lib/icons/FileTextIcon'
 
 export default function TabLayout() {
   return (
@@ -20,7 +21,7 @@ export default function TabLayout() {
         options={{
           title: 'Page',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="document-text" size={size} color={color} />
+            <FileTextIcon size={size} color={color} />
           ),
         }}
       />

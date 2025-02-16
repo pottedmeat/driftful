@@ -1,0 +1,116 @@
+# Cline Rules for Driftful
+
+## Project Intelligence
+
+### 1. Critical Implementation Paths
+- All data changes MUST go through event system, never direct modifications
+- All UI components MUST use NativeWind className prop for styling
+- All platform-specific code MUST use .native.tsx/.web.tsx extensions
+- All timeframe calculations MUST use integer-based system from 1970
+
+### 2. User Preferences
+- NO confirmation dialogs for any actions
+- NO recurring tasks or automation
+- NO notifications or reminders
+- NO complex forms or nested hierarchies
+- ALWAYS maintain ink-like permanence (no reordering, no undo)
+
+### 3. Project Patterns
+- Frame-based navigation for all views
+- Event-sourced data modifications
+- Offline-first operations
+- Breadcrumb tracking for all changes
+
+### 4. Known Challenges
+- Time zone handling requires integer-based dates
+- Event ordering must be strictly chronological
+- Sync conflicts resolve with "last event wins"
+- Past items require copying for modification
+
+### 5. Evolution of Decisions
+- Chosen event-sourced approach for complete history
+- Selected frame-based navigation for consistency
+- Adopted integer-based dates for simplicity
+- Implemented "no confirmation" philosophy
+
+### 6. Tool Usage Patterns
+- Use list_files for directory exploration
+- Use read_file for examining code
+- Use replace_in_file for targeted changes
+- Use write_to_file for new files only
+
+## Implementation Guidelines
+
+### 1. File Organization
+- New components go in components/
+- New hooks go in hooks/
+- New utilities go in utils/
+- New types go in types/
+
+### 2. Naming Conventions
+- Components: PascalCase
+- Hooks: use prefix
+- Utils: camelCase
+- Types: PascalCase + Type/Props/etc.
+
+### 3. Code Style
+- Use TypeScript strict mode
+- Follow NativeWind patterns
+- Keep components focused
+- Maintain clear interfaces
+
+### 4. Testing Approach
+- Unit test components
+- Integration test flows
+- E2E test critical paths
+- Test offline behavior
+
+## Development Workflow
+
+### 1. New Features
+1. Check Memory Bank context
+2. Review relevant documentation
+3. Plan implementation approach
+4. Follow critical paths
+5. Update documentation
+
+### 2. Bug Fixes
+1. Check event logs
+2. Review breadcrumbs
+3. Test offline behavior
+4. Verify cross-platform
+5. Update tests
+
+### 3. Documentation Updates
+1. Review all Memory Bank files
+2. Update activeContext.md
+3. Update progress.md
+4. Add new patterns here
+
+## Key Insights
+
+### 1. Data Management
+- Events are the source of truth
+- Local storage is primary
+- Sync is eventual
+- History is permanent
+
+### 2. User Interface
+- Speed over confirmation
+- Simplicity over features
+- Clarity over complexity
+- Consistency over customization
+
+### 3. Navigation
+- Frame-based views
+- Consistent patterns
+- Clear hierarchies
+- Simple transitions
+
+### 4. Performance
+- Optimize for offline
+- Minimize memory usage
+- Efficient queries
+- Quick transitions
+
+This .clinerules file serves as a living document of project intelligence and will be updated as new patterns and insights emerge.

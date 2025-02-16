@@ -1,3 +1,15 @@
+/**
+ * Utility type that joins an array of strings with a delimiter
+ */
+export type Join<Items extends string[], Delimiter extends string = ''> =
+  Items extends [] 
+    ? '' 
+    : Items extends [infer First, ...infer Rest]
+      ? `${First & string}${Rest extends [] 
+        ? '' 
+        : `${Delimiter}${Join<Rest extends string[] ? Rest : [], Delimiter>}`}`
+      : string;
+
 // Frame type that enforces mutual exclusivity of frame properties
 export type Frame = 
   | { page: 'today' }
