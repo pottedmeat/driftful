@@ -16,10 +16,11 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
 
   const handlePageSelected = useCallback((e: any) => {
     const newFrame = frames[e.nativeEvent.position];
-    if (newFrame) {
+    const newIndex = frames.indexOf(newFrame);
+    if (newIndex !== currentIndex) {
       onFrameChange(newFrame);
     }
-  }, [frames, onFrameChange]);
+  }, [frames, onFrameChange, currentIndex]);
 
   return (
     <View className="flex-1">

@@ -8,7 +8,6 @@ export default function WeekGroupLayout() {
   if (!frame) {
     return null;
   }
-  console.log('WeekGroupLayout', frame);
   return (
     <FrameNavigationProvider initialFrame={frame}>
       <View className="flex-1">

@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
+import { ChevronLeftIcon } from '~/lib/icons/ChevronLeftIcon';
+import { ChevronRightIcon } from '~/lib/icons/ChevronRightIcon';
 import { PagedView } from '../paged-view';
 import { IndexedView } from '../indexed-view';
 import { useFrameNavigation } from '~/contexts/frame-navigation';
@@ -42,8 +43,7 @@ export function FrameView() {
             disabled={currentIndex <= 0}
             onPress={handlePrevFrame}
             className="p-2 rounded-lg">
-            <Ionicons
-              name="chevron-back"
+            <ChevronLeftIcon
               size={24}
               color={currentIndex > 0 ? tintColor : '#9CA3AF'}
             />
@@ -55,8 +55,7 @@ export function FrameView() {
             disabled={currentIndex >= frames.length - 1}
             onPress={handleNextFrame}
             className="p-2 rounded-lg">
-            <Ionicons
-              name="chevron-forward"
+            <ChevronRightIcon
               size={24}
               color={currentIndex < frames.length - 1 ? tintColor : '#9CA3AF'}
             />

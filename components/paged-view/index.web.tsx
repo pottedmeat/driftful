@@ -27,10 +27,11 @@ export function PagedView({ frames, frame, onFrameChange }: PagedViewProps) {
 
   const handleChange = useCallback((index: number) => {
     const newFrame = frames[index];
-    if (newFrame) {
+    const newIndex = frames.indexOf(newFrame);
+    if (newIndex !== currentIndex) {
       onFrameChange(newFrame);
     }
-  }, [frames, onFrameChange]);
+  }, [frames, onFrameChange, currentIndex]);
 
   // Effect to update carousel position when frame changes externally
   useEffect(() => {

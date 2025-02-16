@@ -1,12 +1,16 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { FileTextIcon } from '~/lib/icons/FileTextIcon'
+import { CalendarRangeIcon } from '~/lib/icons/CalendarRangeIcon'
+import { CalendarDaysIcon } from '~/lib/icons/CalendarDaysIcon'
+import { BookOpenIcon } from '~/lib/icons/BookOpenIcon'
+import { TagIcon } from '~/lib/icons/TagIcon'
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        lazy: false,
         tabBarStyle: {
           backgroundColor: '#1f2937',
           borderTopWidth: 0,
@@ -15,6 +19,8 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: '#9ca3af',
+        popToTopOnBlur: false,
+        freezeOnBlur: true,
       }}>
       <Tabs.Screen
         name="(page)"
@@ -23,6 +29,7 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <FileTextIcon size={size} color={color} />
           ),
+          lazy: false,
         }}
       />
       <Tabs.Screen
@@ -30,7 +37,7 @@ export default function TabLayout() {
         options={{
           title: 'Week',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="calendar" size={size} color={color} />
+            <CalendarRangeIcon size={size} color={color} />
           ),
         }}
       />
@@ -39,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Month',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
+            <CalendarDaysIcon size={size} color={color} />
           ),
         }}
       />
@@ -48,7 +55,7 @@ export default function TabLayout() {
         options={{
           title: 'Year',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="calendar-clear" size={size} color={color} />
+            <BookOpenIcon size={size} color={color} />
           ),
         }}
       />
@@ -57,7 +64,7 @@ export default function TabLayout() {
         options={{
           title: 'Collections',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="bookmarks" size={size} color={color} />
+            <TagIcon size={size} color={color} />
           ),
         }}
       />
