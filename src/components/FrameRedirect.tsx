@@ -4,7 +4,7 @@ import { FRAME_TYPES_GROUP } from '~/lib/constants';
 import { getTimeframeIntegers } from '~/lib/utils/date/getTimeframeIntegers';
 import { FrameType, FrameTypeGroup } from '~/types';
 
-export function useFrameRedirect() {
+export function FrameRedirect() {
   const segments = useSegments();
   
   if (FRAME_TYPES_GROUP.includes(segments[1] as unknown as FrameTypeGroup)) {
