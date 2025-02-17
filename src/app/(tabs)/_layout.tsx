@@ -1,12 +1,33 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { CalendarRangeIcon, CalendarDaysIcon, BookOpenIcon, TagIcon } from 'lucide-react-native';
+import { useState, useCallback } from 'react';
 import { FileTextIcon } from '~/components/icons/FileTextIcon';
+import { useFrameContext } from '~/contexts/FrameContextProvider';
 
 export default function TabsLayout() {
+    const [activeTab, setActiveTab] = useState<string | null>(null);
+    const { resetFrame } = useFrameContext();
+    const handleFocus = useCallback((e: { target?: string }) => {
+        setActiveTab(e.target!);
+    }, []);
+    const handleTabPress = useCallback((e: { target?: string }) => {
+        if (e.target === activeTab) {
+            resetFrame();
+        } else {
+            setActiveTab(e.target!);
+        }
+    }, [activeTab, resetFrame]);
+    
     return (
-        <Tabs initialRouteName="(page)" screenOptions={{
-            headerShown: false
-        }}>
+        <Tabs
+            screenOptions={{
+                headerShown: false
+            }}
+            screenListeners={{
+                focus: handleFocus,
+                tabPress: handleTabPress,
+            }}
+        >
             <Tabs.Screen
                 name="(page)"
                 options={{

@@ -16,11 +16,7 @@ import type { FrameType, FrameTypeWindow } from '~/types';
  * - If both are null, shows Future
  */
 export function formatFrameTitle(frameType: FrameType, frameWindow: FrameTypeWindow): string {
-  if (frameType === 'collection') {
-    return 'Collections';
-  }
-
-  if (frameType === 'year') {
+  if (frameType === 'collection' || frameType === 'year') {
     return `${frameWindow}`;
   }
 

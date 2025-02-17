@@ -4,14 +4,17 @@ import { ChevronRightIcon } from '../components/icons/ChevronRightIcon';
 import { Pressable, Text } from 'react-native';
 import { useGlobalSearchParams, useSegments, useRouter } from 'expo-router';
 import type { FrameType, FrameTypeGroup, FrameTypeWindow, FrameTypePlural } from '~/types';
-import { FRAME_TYPES_GROUP, FRAME_TYPES_PLURAL } from '~/lib/constants';
+import { FRAME_TYPE_MAPPINGS, FRAME_TYPES_GROUP, FRAME_TYPES_PLURAL } from '~/lib/constants';
 import { formatFrameTitle } from '~/lib/utils/date/formatFrameTitle';
+import { getTimeframeIntegers } from '~/lib/utils/date/getTimeframeIntegers';
 
 type FrameContextType = {
   title: string;
   goToNextFrame: () => void;
   goToPreviousFrame: () => void;
   toggleIndex: () => void;
+  resetFrame: () => void;
+  index: boolean;
 };
 
 const FrameContext = createContext<FrameContextType | undefined>(undefined);
@@ -32,6 +35,7 @@ export function FrameContextProvider({ children }: { children: React.ReactNode }
     if (segments.length > 2) {
       if (segments[1] && FRAME_TYPES_GROUP.includes(segments[1] as unknown as FrameTypeGroup)) {
         const index = FRAME_TYPES_PLURAL.includes(segments[2] as unknown as FrameTypePlural);
+        console.log({index, segments})
         setIndex(index);
         const frameType = segments[1].slice(1, -1) as FrameType;
         setFrameType(frameType);
@@ -56,20 +60,24 @@ export function FrameContextProvider({ children }: { children: React.ReactNode }
   }, [segments, params, setFrameType, setFrameWindow]);
 
   useEffect(() => {
-    setTitle(formatFrameTitle(frameType, frameWindow)); 
-  }, [frameType, frameWindow]);
+    if (index) {
+      setTitle(FRAME_TYPE_MAPPINGS[frameType].pluralName);
+    } else {
+      setTitle(formatFrameTitle(frameType, frameWindow)); 
+    }
+  }, [frameType, frameWindow, index]);
 
   const goToNextFrame = useCallback(() => {
     if (typeof frameWindow === 'number') {
-      router.push(`/${frameType}/${frameWindow + 1}`);
+      router.push(`/${index ? FRAME_TYPE_MAPPINGS[frameType].plural : frameType}/${frameWindow + 1}`);
     }
-  }, [frameType, frameWindow, router]);
+  }, [frameType, frameWindow, index, router]);
   
   const goToPreviousFrame = useCallback(() => {
     if (typeof frameWindow === 'number') {
-      router.push(`/${frameType}/${frameWindow - 1}`);
+      router.push(`/${index ? FRAME_TYPE_MAPPINGS[frameType].plural : frameType}/${frameWindow - 1}`);
     }
-  }, [frameType, frameWindow, router]);
+  }, [frameType, frameWindow, index, router]);
 
   const toggleIndex = useCallback(() => {
     if (!frameWindow) return;
@@ -79,13 +87,24 @@ export function FrameContextProvider({ children }: { children: React.ReactNode }
     else {
       router.push(`/${frameType}s/${frameWindow}`);
     }
-  }, [index, frameType, frameWindow]);
+  }, [frameType, frameWindow, index]);
+
+  const resetFrame = useCallback(() => {
+    if (frameType === 'page') {
+      router.push(`/${index ? FRAME_TYPE_MAPPINGS[frameType].plural : frameType}/today`);
+    } else if (frameType !== 'collection') {
+      const timeFrameInteger = getTimeframeIntegers();
+      router.push(`/${index ? FRAME_TYPE_MAPPINGS[frameType].plural : frameType}/${timeFrameInteger[frameType]}`);
+    }
+  }, [frameType, index, router]);
 
   const value = {
     title,
     goToNextFrame,
     goToPreviousFrame,
-    toggleIndex
+    toggleIndex,
+    resetFrame,
+    index
   };
 
   return (
@@ -95,7 +114,7 @@ export function FrameContextProvider({ children }: { children: React.ReactNode }
   );
 }
 
-export function useFrame() {
+export function useFrameContext() {
   const context = useContext(FrameContext);
   if (context === undefined) {
     throw new Error('useFrame must be used within a FrameContextProvider');
@@ -104,7 +123,8 @@ export function useFrame() {
 }
 
 export function FrameLeftButton() {
-  const { goToPreviousFrame } = useFrame();
+  const { goToPreviousFrame, index } = useFrameContext();
+  if (index) return null;
   return (
     <Pressable onPress={goToPreviousFrame}>
       <ChevronLeftIcon className="text-foreground" />
@@ -113,7 +133,8 @@ export function FrameLeftButton() {
 }
 
 export function FrameRightButton() {
-  const { goToNextFrame } = useFrame();
+  const { goToNextFrame, index } = useFrameContext();
+  if (index) return null;
   return (
     <Pressable onPress={goToNextFrame}>
       <ChevronRightIcon className="text-foreground" />
@@ -122,7 +143,7 @@ export function FrameRightButton() {
 }
 
 export function FrameHeaderTitle() {
-  const { title, toggleIndex } = useFrame();
+  const { title, toggleIndex } = useFrameContext();
   return (
     <Pressable onPress={toggleIndex}>
       <Text>{title}</Text>

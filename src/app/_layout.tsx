@@ -7,7 +7,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/hooks/useColorScheme';
-import { FrameContextProvider, FrameLeftButton, FrameRightButton, useFrame, FrameHeaderTitle } from '~/contexts/FrameContextProvider';
+import { FrameContextProvider, FrameLeftButton, FrameRightButton, useFrameContext, FrameHeaderTitle } from '~/contexts/FrameContextProvider';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
