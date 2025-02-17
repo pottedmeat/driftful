@@ -5,6 +5,7 @@ import { Pressable, Text } from 'react-native';
 import { useGlobalSearchParams, useSegments, useRouter } from 'expo-router';
 import type { FrameType, FrameTypeGroup, FrameTypeWindow, FrameTypePlural } from '~/types';
 import { FRAME_TYPES_GROUP, FRAME_TYPES_PLURAL } from '~/lib/constants';
+import { formatFrameTitle } from '~/lib/utils/date/formatFrameTitle';
 
 type FrameContextType = {
   title: string;
@@ -54,13 +55,21 @@ export function FrameContextProvider({ children }: { children: React.ReactNode }
     }
   }, [segments, params, setFrameType, setFrameWindow]);
 
-  const goToNextFrame = useCallback(() => {
-    router.push(`/${frameType}/${frameWindow + 1}`);
+  useEffect(() => {
+    setTitle(formatFrameTitle(frameType, frameWindow)); 
   }, [frameType, frameWindow]);
+
+  const goToNextFrame = useCallback(() => {
+    if (typeof frameWindow === 'number') {
+      router.push(`/${frameType}/${frameWindow + 1}`);
+    }
+  }, [frameType, frameWindow, router]);
   
   const goToPreviousFrame = useCallback(() => {
-    router.push(`/${frameType}/${frameWindow - 1}`);
-  }, [frameType, frameWindow]);
+    if (typeof frameWindow === 'number') {
+      router.push(`/${frameType}/${frameWindow - 1}`);
+    }
+  }, [frameType, frameWindow, router]);
 
   const toggleIndex = useCallback(() => {
     if (!frameWindow) return;
@@ -116,7 +125,7 @@ export function FrameHeaderTitle() {
   const { title, toggleIndex } = useFrame();
   return (
     <Pressable onPress={toggleIndex}>
-      <Text className="text-foreground text-lg font-medium">{title}</Text>
+      <Text>{title}</Text>
     </Pressable>
   );
 } 

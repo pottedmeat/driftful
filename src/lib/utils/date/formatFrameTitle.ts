@@ -1,4 +1,7 @@
 import { format, isToday, isTomorrow, isYesterday, isSameMonth, isSameYear } from 'date-fns';
+import { getDatesFromTimeframeIntegers } from '~/lib/utils/date/getDatesFromTimeframeIntegers';
+
+import type { FrameType, FrameTypeWindow } from '~/types';
 
 /**
  * Formats a title based on start and end dates following these rules:
@@ -12,14 +15,49 @@ import { format, isToday, isTomorrow, isYesterday, isSameMonth, isSameYear } fro
  * - If endDate is null, shows startDate — Future
  * - If both are null, shows Future
  */
-export function formatDateTitle(startDate: Date | null, endDate: Date | null): string {
+export function formatFrameTitle(frameType: FrameType, frameWindow: FrameTypeWindow): string {
+  if (frameType === 'collection') {
+    return 'Collections';
+  }
+
+  if (frameType === 'year') {
+    return `${frameWindow}`;
+  }
+
+  if (frameType === 'page') {
+    if (frameWindow === 'future') {
+      // TODO: Get the date of the entity farthest in the future
+      return 'Tomorrow — Farthest Entity';
+    }
+    if (frameWindow === 'today') {
+      // TODO: Get the page where end_day is null
+      return 'Start Date — Today';
+    }
+    // TODO: Get the page with this page number
+    return `Page ${frameWindow}`;
+  }
+
+  if (typeof frameWindow !== 'number') {
+    return 'Unknown Timeframe';
+  }
+  
+  const now = new Date();
+  const timeframe = { [frameType]: frameWindow };
+  const dates = getDatesFromTimeframeIntegers(timeframe);
+  const [startDate, endDate] = dates[frameType];
+
+  if (frameType === 'month') {
+    const needsYear = !isSameYear(startDate, now);
+    return format(startDate, needsYear ? 'MMMM yyyy' : 'MMMM');
+  }
+  
   if (!startDate && !endDate) return "Future";
 
   // Handle null end date (current page)
   if (!endDate) {
     if (!startDate) return "Today";
     if (isToday(startDate)) return "Today";
-    return `${format(startDate, "MMM d, yyyy")} — Today`;
+    return `${format(startDate, "MMM do, yyyy")} — Today`;
   }
 
   // Handle null start date (only show end date)
@@ -29,7 +67,7 @@ export function formatDateTitle(startDate: Date | null, endDate: Date | null): s
     else if (isYesterday(endDate)) endPart = "Yesterday";
     else if (isTomorrow(endDate)) endPart = "Tomorrow";
     else {
-      const needsYear = !isSameYear(endDate, new Date());
+      const needsYear = !isSameYear(endDate, now);
       endPart = format(endDate, needsYear ? "MMM d, yyyy" : "MMM d");
     }
     return `Oldest — ${endPart}`;
@@ -44,9 +82,9 @@ export function formatDateTitle(startDate: Date | null, endDate: Date | null): s
   } else if (isTomorrow(startDate)) {
     startPart = "Tomorrow";
   } else {
-    const needsYear = !isSameYear(startDate, new Date()) && !isSameYear(startDate, endDate);
+    const needsYear = !isSameYear(startDate, now) && !isSameYear(startDate, endDate);
     const needsMonth = !isSameMonth(startDate, endDate) || !isSameYear(startDate, endDate);
-    startPart = format(startDate, needsYear ? "MMM d, yyyy" : needsMonth ? "MMM d" : "d");
+    startPart = format(startDate, needsYear ? "MMM do, yyyy" : needsMonth ? "MMM do" : "do");
   }
 
   // Format end date part
@@ -58,13 +96,13 @@ export function formatDateTitle(startDate: Date | null, endDate: Date | null): s
   } else if (isTomorrow(endDate)) {
     endPart = "Tomorrow";
   } else {
-    const needsYear = !isSameYear(endDate, new Date());
+    const needsYear = !isSameYear(endDate, now);
     const needsMonth = !isSameMonth(startDate, endDate);
     const format_str = needsYear ? 
-      (needsMonth ? "MMM d, yyyy" : "d, yyyy") :
-      (needsMonth ? "MMM d" : "d");
+      (needsMonth ? "MMM do, yyyy" : "do, yyyy") :
+      (needsMonth ? "MMM do" : "do");
     endPart = format(endDate, format_str);
   }
 
   return `${startPart} – ${endPart}`;
-} 
+}
