@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useCallback, useState, useEffect } from 'react';
 import { ChevronLeftIcon } from '../components/icons/ChevronLeftIcon';
 import { ChevronRightIcon } from '../components/icons/ChevronRightIcon';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useGlobalSearchParams, useSegments, useRouter } from 'expo-router';
 import type { FrameType, FrameTypeGroup, FrameTypeWindow, FrameTypePlural } from '~/types';
 import { FRAME_TYPE_MAPPINGS, FRAME_TYPES_GROUP, FRAME_TYPES_PLURAL } from '~/lib/constants';
@@ -126,7 +126,10 @@ export function FrameLeftButton() {
   const { goToPreviousFrame, index } = useFrameContext();
   if (index) return null;
   return (
-    <Pressable onPress={goToPreviousFrame}>
+    <Pressable 
+      onPress={goToPreviousFrame}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+    >
       <ChevronLeftIcon className="text-foreground" />
     </Pressable>
   );
@@ -136,7 +139,10 @@ export function FrameRightButton() {
   const { goToNextFrame, index } = useFrameContext();
   if (index) return null;
   return (
-    <Pressable onPress={goToNextFrame}>
+    <Pressable 
+      onPress={goToNextFrame}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+    >
       <ChevronRightIcon className="text-foreground" />
     </Pressable>
   );
@@ -145,7 +151,17 @@ export function FrameRightButton() {
 export function FrameHeaderTitle() {
   const { title, toggleIndex } = useFrameContext();
   return (
-    <Pressable onPress={toggleIndex}>
+    <Pressable 
+      onPress={toggleIndex}
+      style={{
+        flex: 1,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 10,
+        paddingBottom: 10,
+      }}
+    >
       <Text>{title}</Text>
     </Pressable>
   );
