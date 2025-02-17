@@ -83,7 +83,7 @@ export function formatFrameTitle(frameType: FrameType, frameWindow: FrameTypeWin
     startPart = "Tomorrow";
   } else {
     const needsYear = !isSameYear(startDate, now) && !isSameYear(startDate, endDate);
-    const needsMonth = !isSameMonth(startDate, endDate) || !isSameYear(startDate, endDate);
+    const needsMonth = !isSameMonth(startDate, endDate) || !isSameMonth(startDate, now) || !isSameYear(startDate, endDate);
     startPart = format(startDate, needsYear ? "MMM do, yyyy" : needsMonth ? "MMM do" : "do");
   }
 
